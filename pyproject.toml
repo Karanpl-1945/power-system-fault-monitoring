@@ -1,0 +1,20 @@
+[project]
+name = "predictive-maintenance-power-supply"
+version = "0.1.0"
+description = "Fault detection and predictive maintenance pipeline for power-supply voltage/current telemetry."
+requires-python = ">=3.10"
+readme = "README.md"
+
+[build-system]
+requires = ["setuptools>=83", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

@@ -1,0 +1,21 @@
+dataset:
+  labels_path: hv_double_line_90kv_labels.csv
+  waveform_dir: hv_double_line_90kv_preprocessed_data
+  sample_rate_hz: 6400
+  grid_frequency_hz: 50
+
+windowing:
+  window_samples: 640
+  stride_samples: 128
+
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  seed: 42
+
+kafka:
+  bootstrap_servers: localhost:9092
+  telemetry_topic: power.telemetry
+  prediction_topic: power.predictions
+
