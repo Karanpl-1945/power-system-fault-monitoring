@@ -1,0 +1,52 @@
+{
+  "mode": "kafka_inference_consumer",
+  "model_path": "models/xgboost_fault_detector_48ch_tuned_recall97.joblib",
+  "input_topic": "power.waveform.windows",
+  "prediction_topic": "power.fault.predictions",
+  "alert_topic": "power.fault.alerts",
+  "messages_processed": 46,
+  "alerts": 18,
+  "avg_latency_ms": 57.00210519558902,
+  "max_latency_ms": 110.37834000308067,
+  "first_alert": {
+    "sample_id": 0,
+    "window_index": 18,
+    "window_start_time": 0.340156,
+    "window_end_time": 0.44,
+    "prediction": "fault",
+    "probability": 0.9989939332008362,
+    "threshold": 0.9755968451499939,
+    "alert": true,
+    "latency_ms": 73.0470639973646,
+    "true_window_label": "fault",
+    "top_features": [
+      {
+        "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+        "importance": 0.16011901199817657,
+        "value": 1822.915948
+      },
+      {
+        "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+        "importance": 0.11995402723550797,
+        "value": 50694.018764050976
+      },
+      {
+        "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+        "importance": 0.08915862441062927,
+        "value": 1592.157074
+      },
+      {
+        "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+        "importance": 0.0742696076631546,
+        "value": 0.0
+      },
+      {
+        "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+        "importance": 0.0497966930270195,
+        "value": 3684.487679
+      }
+    ],
+    "missing_feature_count": 0
+  },
+  "alerts_path": "reports/kafka_alerts.jsonl"
+}

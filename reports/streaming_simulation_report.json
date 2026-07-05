@@ -1,0 +1,270 @@
+{
+  "mode": "local_streaming_simulation",
+  "model_path": "models/xgboost_fault_detector_48ch_tuned_recall97.joblib",
+  "sample_id": 0,
+  "window_samples": 640,
+  "stride_samples": 128,
+  "channel_count": 48,
+  "threshold": 0.9755968451499939,
+  "windows_processed": 46,
+  "alerts": 18,
+  "first_alert": {
+    "sample_id": 0,
+    "window_index": 18,
+    "start_idx": 2176,
+    "end_idx": 2816,
+    "window_start_time": 0.340156,
+    "window_end_time": 0.44,
+    "true_window_label": "fault",
+    "probability": 0.9989939332008362,
+    "threshold": 0.9755968451499939,
+    "prediction": "fault",
+    "alert": true,
+    "latency_ms": 61.666556997806765,
+    "missing_feature_count": 0,
+    "top_features": [
+      {
+        "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+        "importance": 0.16011901199817657,
+        "value": 1822.915948
+      },
+      {
+        "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+        "importance": 0.11995402723550797,
+        "value": 50694.018764050976
+      },
+      {
+        "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+        "importance": 0.08915862441062927,
+        "value": 1592.157074
+      },
+      {
+        "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+        "importance": 0.0742696076631546,
+        "value": 0.0
+      },
+      {
+        "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+        "importance": 0.0497966930270195,
+        "value": 3684.487679
+      }
+    ]
+  },
+  "avg_latency_ms": 46.89425423946333,
+  "max_latency_ms": 87.07133199641248,
+  "true_fault_windows": 18,
+  "predicted_fault_windows": 18,
+  "events_preview": [
+    {
+      "sample_id": 0,
+      "window_index": 1,
+      "start_idx": 0,
+      "end_idx": 640,
+      "window_start_time": 0.000156,
+      "window_end_time": 0.1,
+      "true_window_label": "normal",
+      "probability": 0.00014397964696399868,
+      "threshold": 0.9755968451499939,
+      "prediction": "normal",
+      "alert": false,
+      "latency_ms": 41.85628100094618,
+      "missing_feature_count": 0,
+      "top_features": [
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+          "importance": 0.16011901199817657,
+          "value": 1592.5068099999999
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+          "importance": 0.11995402723550797,
+          "value": 52201.10797017402
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+          "importance": 0.08915862441062927,
+          "value": 1592.157103
+        },
+        {
+          "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+          "importance": 0.0742696076631546,
+          "value": 0.0
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+          "importance": 0.0497966930270195,
+          "value": 1592.430136
+        }
+      ]
+    },
+    {
+      "sample_id": 0,
+      "window_index": 2,
+      "start_idx": 128,
+      "end_idx": 768,
+      "window_start_time": 0.020156,
+      "window_end_time": 0.12,
+      "true_window_label": "normal",
+      "probability": 0.00011026649008272216,
+      "threshold": 0.9755968451499939,
+      "prediction": "normal",
+      "alert": false,
+      "latency_ms": 32.24864600633737,
+      "missing_feature_count": 0,
+      "top_features": [
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+          "importance": 0.16011901199817657,
+          "value": 1592.506786
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+          "importance": 0.11995402723550797,
+          "value": 52201.107970016055
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+          "importance": 0.08915862441062927,
+          "value": 1592.157082
+        },
+        {
+          "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+          "importance": 0.0742696076631546,
+          "value": 0.0
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+          "importance": 0.0497966930270195,
+          "value": 1592.43013
+        }
+      ]
+    },
+    {
+      "sample_id": 0,
+      "window_index": 3,
+      "start_idx": 256,
+      "end_idx": 896,
+      "window_start_time": 0.040156,
+      "window_end_time": 0.14,
+      "true_window_label": "normal",
+      "probability": 0.00011026649008272216,
+      "threshold": 0.9755968451499939,
+      "prediction": "normal",
+      "alert": false,
+      "latency_ms": 30.006826993485447,
+      "missing_feature_count": 0,
+      "top_features": [
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+          "importance": 0.16011901199817657,
+          "value": 1592.5067789999998
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+          "importance": 0.11995402723550797,
+          "value": 52201.107969955934
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+          "importance": 0.08915862441062927,
+          "value": 1592.157076
+        },
+        {
+          "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+          "importance": 0.0742696076631546,
+          "value": 0.0
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+          "importance": 0.0497966930270195,
+          "value": 1592.430128
+        }
+      ]
+    },
+    {
+      "sample_id": 0,
+      "window_index": 4,
+      "start_idx": 384,
+      "end_idx": 1024,
+      "window_start_time": 0.060156,
+      "window_end_time": 0.16,
+      "true_window_label": "normal",
+      "probability": 0.00011026649008272216,
+      "threshold": 0.9755968451499939,
+      "prediction": "normal",
+      "alert": false,
+      "latency_ms": 29.4743920021574,
+      "missing_feature_count": 0,
+      "top_features": [
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+          "importance": 0.16011901199817657,
+          "value": 1592.506777
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+          "importance": 0.11995402723550797,
+          "value": 52201.107969924495
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+          "importance": 0.08915862441062927,
+          "value": 1592.157074
+        },
+        {
+          "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+          "importance": 0.0742696076631546,
+          "value": 0.0
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+          "importance": 0.0497966930270195,
+          "value": 1592.430128
+        }
+      ]
+    },
+    {
+      "sample_id": 0,
+      "window_index": 5,
+      "start_idx": 512,
+      "end_idx": 1152,
+      "window_start_time": 0.080156,
+      "window_end_time": 0.18,
+      "true_window_label": "normal",
+      "probability": 0.00011026649008272216,
+      "threshold": 0.9755968451499939,
+      "prediction": "normal",
+      "alert": false,
+      "latency_ms": 46.11853900132701,
+      "missing_feature_count": 0,
+      "top_features": [
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L1_A_ptp",
+          "importance": 0.16011901199817657,
+          "value": 1592.506777
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_vol_L2_V_rms",
+          "importance": 0.11995402723550797,
+          "value": 52201.10796990893
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L3_A_ptp",
+          "importance": 0.08915862441062927,
+          "value": 1592.157074
+        },
+        {
+          "feature": "Bus_1_Line_01_02B_cur_L1_A_ptp",
+          "importance": 0.0742696076631546,
+          "value": 0.0
+        },
+        {
+          "feature": "Bus_1_Line_01_02A_cur_L2_A_ptp",
+          "importance": 0.0497966930270195,
+          "value": 1592.430128
+        }
+      ]
+    }
+  ],
+  "alerts_path": "reports/streaming_alerts.jsonl"
+}
