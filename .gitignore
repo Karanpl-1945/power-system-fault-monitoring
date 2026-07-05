@@ -43,6 +43,7 @@ models/*
 reports/figures/*
 !reports/figures/.gitkeep
 reports/*.html
+reports/*_threshold_sweep*.csv
 
 # Notebooks
 .ipynb_checkpoints/
