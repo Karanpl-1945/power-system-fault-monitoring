@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 
 from predictive_maintenance.data.protect90 import load_labels
-from predictive_maintenance.data.split import create_episode_split, save_split
+from predictive_maintenance.data.split import create_episode_split, save_split, validate_episode_split
 
 
 def parse_args() -> argparse.Namespace:
@@ -21,6 +21,7 @@ def main() -> None:
     args = parse_args()
     labels = load_labels(args.labels)
     split = create_episode_split(labels, args.train, args.val, args.test, args.seed)
+    validate_episode_split(split)
     save_split(split, args.output)
     print(split["split"].value_counts().to_string())
     print(f"saved={args.output}")
@@ -28,4 +29,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

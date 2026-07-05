@@ -1,6 +1,12 @@
 import pandas as pd
 
-from predictive_maintenance.data.split import create_episode_split
+import pytest
+
+from predictive_maintenance.data.split import (
+    create_episode_split,
+    validate_episode_split,
+    validate_feature_frame_membership,
+)
 
 
 def test_create_episode_split_assigns_each_sample_once():
@@ -10,4 +16,29 @@ def test_create_episode_split_assigns_each_sample_once():
     assert len(split) == 100
     assert split["sample_id"].nunique() == 100
     assert set(split["split"]) == {"train", "val", "test"}
+    validate_episode_split(split)
 
+
+def test_validate_episode_split_rejects_duplicate_sample_ids():
+    split = pd.DataFrame(
+        {
+            "sample_id": [1, 1, 2],
+            "split": ["train", "test", "val"],
+        }
+    )
+
+    with pytest.raises(ValueError, match="sample_id appears"):
+        validate_episode_split(split)
+
+
+def test_validate_feature_frame_membership_rejects_wrong_split_ids():
+    split = pd.DataFrame(
+        {
+            "sample_id": [1, 2, 3],
+            "split": ["train", "val", "test"],
+        }
+    )
+    features = pd.DataFrame({"sample_id": [1, 2], "feature": [0.1, 0.2]})
+
+    with pytest.raises(ValueError, match="data leakage"):
+        validate_feature_frame_membership(features, split, "train")

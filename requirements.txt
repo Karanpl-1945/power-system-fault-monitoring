@@ -1,6 +1,8 @@
 pandas>=2.2
 numpy>=1.26
 scikit-learn>=1.5
+xgboost>=2.0
+optuna>=4.0
 matplotlib>=3.8
 seaborn>=0.13
 joblib>=1.4
