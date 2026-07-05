@@ -1,0 +1,62 @@
+{
+  "model": "XGBClassifierOptuna",
+  "target": "binary_target",
+  "threshold": 0.965518593788147,
+  "feature_count": 291,
+  "train_rows": 46000,
+  "search_train_rows": 12000,
+  "val_rows": 46000,
+  "test_rows": 46000,
+  "scale_pos_weight_base": 1.8717692595829691,
+  "best_score": 1.9545821401337056,
+  "best_params": {
+    "n_estimators": 150,
+    "max_depth": 6,
+    "learning_rate": 0.08606122623262345,
+    "min_child_weight": 4.90278528414539,
+    "gamma": 1.255465302816986,
+    "subsample": 0.9829299943053544,
+    "colsample_bytree": 0.8068696878482884,
+    "reg_alpha": 0.06534091903110016,
+    "reg_lambda": 0.0038176242100890104,
+    "scale_pos_weight": 3.0118654299414285,
+    "objective": "binary:logistic",
+    "eval_metric": "logloss",
+    "random_state": 42,
+    "n_jobs": -1,
+    "verbosity": 0
+  },
+  "validation_metrics": {
+    "tn": 29322,
+    "fp": 17,
+    "fn": 495,
+    "tp": 16166,
+    "accuracy": 0.9888695652173913,
+    "precision": 0.9989495149230674,
+    "recall": 0.9702898985655123,
+    "false_positive_rate": 0.0005794335185248305,
+    "false_negative_rate": 0.029710101434487726
+  },
+  "search_validation_metrics": {
+    "tn": 29270,
+    "fp": 69,
+    "fn": 490,
+    "tp": 16171,
+    "accuracy": 0.9878478260869565,
+    "precision": 0.9957512315270935,
+    "recall": 0.9705900006002041,
+    "false_positive_rate": 0.0023518183987184292,
+    "false_negative_rate": 0.02940999939979593
+  },
+  "test_metrics": {
+    "tn": 29018,
+    "fp": 69,
+    "fn": 644,
+    "tp": 16269,
+    "accuracy": 0.9845,
+    "precision": 0.9957767168564083,
+    "recall": 0.9619227812924969,
+    "false_positive_rate": 0.0023721937635369753,
+    "false_negative_rate": 0.0380772187075031
+  }
+}

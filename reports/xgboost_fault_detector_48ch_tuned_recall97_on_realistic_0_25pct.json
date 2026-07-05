@@ -1,0 +1,19 @@
+{
+  "model_path": "models/xgboost_fault_detector_48ch_tuned_recall97.joblib",
+  "data_path": "data/processed_48ch/features_test_realistic_0_25pct.csv",
+  "threshold": 0.9755968451499939,
+  "metrics": {
+    "tn": 29064,
+    "fp": 23,
+    "fn": 4,
+    "tp": 69,
+    "accuracy": 0.9990740740740741,
+    "precision": 0.75,
+    "recall": 0.9452054794520548,
+    "false_positive_rate": 0.0007907312545123251,
+    "false_negative_rate": 0.0547945205479452,
+    "alerts_per_10000_windows": 7.907312545123251,
+    "fault_ratio": 0.002503429355281207,
+    "rows": 29160
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "model": "XGBClassifier",
+  "target": "binary_target",
+  "threshold": 0.9913473725318909,
+  "feature_count": 291,
+  "train_rows": 46000,
+  "val_rows": 46000,
+  "test_rows": 46000,
+  "scale_pos_weight": 1.8717692595829691,
+  "validation_metrics": {
+    "tn": 29332,
+    "fp": 7,
+    "fn": 772,
+    "tp": 15889,
+    "accuracy": 0.9830652173913044,
+    "precision": 0.9995596376446905,
+    "recall": 0.9536642458435868,
+    "false_positive_rate": 0.0002385902723337537,
+    "false_negative_rate": 0.04633575415641318
+  },
+  "test_metrics": {
+    "tn": 29078,
+    "fp": 9,
+    "fn": 997,
+    "tp": 15916,
+    "accuracy": 0.9781304347826087,
+    "precision": 0.9994348508634223,
+    "recall": 0.9410512623425767,
+    "false_positive_rate": 0.00030941657785264894,
+    "false_negative_rate": 0.058948737657423284
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "model": "XGBClassifierThresholdTuned",
+  "base_model_path": "models/xgboost_fault_detector_48ch.joblib",
+  "tuned_model_path": "models/xgboost_fault_detector_48ch_tuned_threshold.joblib",
+  "target": "binary_target",
+  "threshold": 0.9861921072006226,
+  "original_threshold": 0.9913473725318909,
+  "feature_count": 291,
+  "train_rows": null,
+  "val_rows": 46000,
+  "test_rows": 46000,
+  "tuning_data": "data/processed_48ch/features_val.csv",
+  "test_data": "data/processed_48ch/features_test.csv",
+  "tuning_goal": {
+    "min_validation_recall": 0.96,
+    "max_validation_fpr": 0.03
+  },
+  "validation_metrics": {
+    "tn": 29328,
+    "fp": 11,
+    "fn": 637,
+    "tp": 16024,
+    "precision": 0.9993140006236358,
+    "recall": 0.9617670007802653,
+    "false_positive_rate": 0.0003749275708101844
+  },
+  "test_metrics": {
+    "tn": 29074,
+    "fp": 13,
+    "fn": 860,
+    "tp": 16053,
+    "accuracy": 0.9810217391304348,
+    "precision": 0.9991908377940993,
+    "recall": 0.9491515402353219,
+    "false_positive_rate": 0.0004469350568982707,
+    "false_negative_rate": 0.050848459764678056
+  },
+  "original_test_metrics": {
+    "tn": 29078,
+    "fp": 9,
+    "fn": 997,
+    "tp": 15916,
+    "accuracy": 0.9781304347826087,
+    "precision": 0.9994348508634223,
+    "recall": 0.9410512623425767,
+    "false_positive_rate": 0.00030941657785264894,
+    "false_negative_rate": 0.058948737657423284
+  }
+}
