@@ -19,6 +19,7 @@ def parse_args() -> argparse.Namespace:
             "reports/xgboost_fault_detector_48ch_tuned_threshold_report.json",
             "reports/xgboost_fault_detector_48ch_tuned_recall97_report.json",
             "reports/xgboost_fault_detector_48ch_optuna_report.json",
+            "reports/cnn1d_fault_detector_smoke_report.json",
         ],
     )
     parser.add_argument("--output", default="reports/model_comparison.csv")
@@ -29,7 +30,11 @@ def main() -> None:
     args = parse_args()
     rows = []
     for report_path in args.reports:
-        report = json.loads(Path(report_path).read_text())
+        path = Path(report_path)
+        if not path.exists():
+            print(f"missing={path}; skipping")
+            continue
+        report = json.loads(path.read_text())
         row = {
             "report": report_path,
             "model": report["model"],
