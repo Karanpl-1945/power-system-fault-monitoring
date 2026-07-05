@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Power Fault Monitoring Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div>
+          <p class="eyebrow">Predictive Maintenance</p>
+          <h1>Power Fault Monitor</h1>
+        </div>
+        <nav>
+          <a href="#status">Status</a>
+          <a href="#stream">Kafka Stream</a>
+          <a href="#live-feed">Live Feed</a>
+          <a href="#waveform">Waveform</a>
+          <a href="#models">Models</a>
+          <a href="#alerts">Alerts</a>
+        </nav>
+      </aside>
+
+      <main>
+        <section id="status" class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Current Candidate</p>
+              <h2 id="modelName">Loading model</h2>
+            </div>
+            <span id="healthBadge" class="badge">Checking</span>
+          </div>
+          <div class="metric-grid">
+            <article class="metric">
+              <span>Test Recall</span>
+              <strong id="testRecall">--</strong>
+            </article>
+            <article class="metric">
+              <span>Test Precision</span>
+              <strong id="testPrecision">--</strong>
+            </article>
+            <article class="metric">
+              <span>Test FPR</span>
+              <strong id="testFpr">--</strong>
+            </article>
+            <article class="metric">
+              <span>False Negatives</span>
+              <strong id="testFn">--</strong>
+            </article>
+          </div>
+        </section>
+
+        <section id="stream" class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Streaming Demo</p>
+              <h2>Kafka Inference Run (last recorded report)</h2>
+            </div>
+            <button id="refreshButton" type="button">Refresh</button>
+          </div>
+          <div class="metric-grid">
+            <article class="metric">
+              <span>Messages</span>
+              <strong id="kafkaMessages">--</strong>
+            </article>
+            <article class="metric">
+              <span>Alerts</span>
+              <strong id="kafkaAlerts">--</strong>
+            </article>
+            <article class="metric">
+              <span>Avg Latency</span>
+              <strong id="kafkaLatency">--</strong>
+            </article>
+            <article class="metric">
+              <span>First Alert</span>
+              <strong id="firstAlert">--</strong>
+            </article>
+          </div>
+        </section>
+
+        <section id="live-feed" class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Real-Time</p>
+              <h2>Live Kafka Feed</h2>
+            </div>
+            <div class="controls">
+              <span id="unacknowledgedBadge" class="badge subtle hidden">0 new alerts</span>
+              <button id="acknowledgeButton" type="button">Acknowledge</button>
+              <span id="liveConnectionBadge" class="badge subtle">Connecting</span>
+            </div>
+          </div>
+          <p class="section-note">
+            Streamed live over WebSocket from the Kafka <code>power.fault.predictions</code> topic,
+            fed by a real Kafka producer/consumer pair running behind this API.
+          </p>
+          <div class="controls replay-controls">
+            <label for="episodeSelect">Episode</label>
+            <select id="episodeSelect"></select>
+            <button id="replayButton" type="button">Replay Episode</button>
+            <span id="replayStatus" class="alert-meta"></span>
+          </div>
+          <div class="metric-grid">
+            <article class="metric">
+              <span>Live Messages</span>
+              <strong id="liveFeedMessages">0</strong>
+            </article>
+            <article class="metric">
+              <span>Live Alerts</span>
+              <strong id="liveFeedAlerts">0</strong>
+            </article>
+            <article class="metric">
+              <span>Last Latency</span>
+              <strong id="liveFeedLatency">--</strong>
+            </article>
+            <article class="metric">
+              <span>Last Window</span>
+              <strong id="liveFeedWindow">--</strong>
+            </article>
+          </div>
+          <canvas id="liveWaveformCanvas" width="1200" height="220"></canvas>
+          <div id="liveFeedList" class="alert-list live-feed-list">
+            <p class="alert-meta">Waiting for live Kafka messages...</p>
+          </div>
+        </section>
+
+        <section id="waveform" class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Simulated Replay</p>
+              <h2>Canned Waveform Playback (not live data)</h2>
+            </div>
+            <div class="controls">
+              <button id="playButton" type="button">Start</button>
+              <button id="pauseButton" type="button">Pause</button>
+              <button id="resetButton" type="button">Reset</button>
+            </div>
+          </div>
+          <p class="section-note">
+            This section replays one stored PROTECT-90 episode through the model on a timer -
+            it is a UI demo, not a live stream. See "Live Kafka Feed" above for real Kafka events.
+          </p>
+          <div class="live-strip">
+            <div>
+              <span>Window</span>
+              <strong id="liveWindow">--</strong>
+            </div>
+            <div>
+              <span>Time</span>
+              <strong id="liveTime">--</strong>
+            </div>
+            <div>
+              <span>Prediction</span>
+              <strong id="livePrediction">--</strong>
+            </div>
+            <div>
+              <span>Probability</span>
+              <strong id="liveProbability">--</strong>
+            </div>
+            <div>
+              <span>True Label</span>
+              <strong id="liveTruth">--</strong>
+            </div>
+          </div>
+          <canvas id="waveformCanvas" width="1200" height="420"></canvas>
+        </section>
+
+        <section id="models" class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Evaluation</p>
+              <h2>Model Comparison</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Recall</th>
+                  <th>FPR</th>
+                  <th>Precision</th>
+                  <th>FN</th>
+                  <th>FP</th>
+                </tr>
+              </thead>
+              <tbody id="modelRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Rare Fault</p>
+              <h2>Realistic Evaluation</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Model</th>
+                  <th>Fault Ratio</th>
+                  <th>Recall</th>
+                  <th>Precision</th>
+                  <th>Alerts / 10k</th>
+                </tr>
+              </thead>
+              <tbody id="rareRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="alerts" class="section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Fault Alerts</p>
+              <h2>Alert Incidents</h2>
+            </div>
+          </div>
+          <div id="alertList" class="alert-list"></div>
+        </section>
+      </main>
+    </div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
