@@ -21,11 +21,15 @@ hv_double_line_90kv_preprocessed_data/
 data/raw/
 data/interim/
 data/processed/
+data/processed*/
 data/external/
 *.pkl
 *.parquet
 *.npy
 *.npz
+
+# Old/superseded local experiment outputs
+archive_old_outputs/
 
 # Model artifacts
 models/*
