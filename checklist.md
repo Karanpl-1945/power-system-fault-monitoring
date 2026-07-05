@@ -18,6 +18,45 @@ The full dataset has:
 
 So far, we did **not** train on the full dataset.
 
+## Resume Point
+
+Current project status:
+
+- Best production candidate is `models/xgboost_fault_detector_48ch_tuned_recall97.joblib`.
+- Best production candidate uses 48-channel engineered features and threshold tuning.
+- Standard test result for best production candidate:
+  - recall = 95.97%
+  - FPR = 0.08%
+  - precision = 99.86%
+  - false negatives = 681
+  - false positives = 23
+- Rare-fault result for best production candidate:
+  - 0.5% fault rate: recall = 95.21%, precision = 85.80%, FPR = 0.08%
+  - 0.25% fault rate: recall = 94.52%, precision = 75.00%, FPR = 0.08%
+- XGBoost works for real-time advanced prediction through rolling-window feature extraction:
+  - raw voltage/current stream
+  - sliding window
+  - statistical feature extraction
+  - XGBoost probability
+  - threshold-based alert
+- 1D-CNN raw waveform model was started only as a smoke test.
+- 1D-CNN smoke test proves the time-series pipeline works, but it is not the final model yet.
+- Larger CNN training can be done later on GPU/remote notebook.
+
+Where to continue:
+
+1. Continue system/demo work with the best XGBoost model.
+2. Build API inference path around `models/xgboost_fault_detector_48ch_tuned_recall97.joblib`.
+3. Build Kafka/streaming replay simulation using rolling-window feature extraction.
+4. Return to larger 1D-CNN training later only if we want to improve beyond XGBoost.
+
+Do not forget:
+
+- Future testing for the current production candidate must use 48-channel features.
+- Do not test 48-channel models on old 6-channel feature files.
+- Old 6-channel data is only for baseline comparison/debugging.
+- CNN larger training is optional and postponed, not blocked.
+
 For the first smoke/baseline run, we used:
 
 - 200 train episodes
@@ -655,26 +694,309 @@ Candidate:
 - 1D-CNN first
 - LSTM/GRU later if needed
 
+Plan:
+
+- Add PyTorch as the deep-learning dependency.
+- Create an on-the-fly raw-window dataset loader.
+- Use the existing episode split, so no sample ID leakage is introduced.
+- Start with a small smoke run, not full training.
+- Use 48 waveform channels.
+- Normalize each raw window before passing it to the network.
+- Compare the smoke result against XGBoost only as a pipeline check.
+
+First smoke command:
+
+```bash
+python scripts/train_1d_cnn.py \
+  --max-episodes 100 \
+  --max-train-windows 3000 \
+  --max-val-windows 1500 \
+  --max-test-windows 1500 \
+  --epochs 2 \
+  --batch-size 64 \
+  --channel-limit 48 \
+  --model-output models/cnn1d_fault_detector_smoke.pt \
+  --report-output reports/cnn1d_fault_detector_smoke_report.json
+```
+
 Checklist:
 
-- [ ] Create raw-window dataset loader.
-- [ ] Train 1D-CNN binary detector.
-- [ ] Compare against XGBoost.
-- [ ] Evaluate latency.
+- [x] Add PyTorch dependency.
+- [x] Create raw-window dataset loader.
+- [x] Create 1D-CNN training script.
+- [x] Run small 1D-CNN smoke training.
+- [x] Compare smoke result against current XGBoost.
+- [x] Evaluate latency.
 
-### Step 9 — Streaming/Kafka Simulation
+Result:
+
+The first 1D-CNN run was a smoke test, not final training.
+
+```text
+1D-CNN smoke setup:
+  channels = 48
+  train windows = 3,000
+  validation windows = 1,500
+  test windows = 1,500
+  epochs = 2
+  device = CPU
+
+1D-CNN smoke result:
+  validation recall = 96.35%
+  validation FPR = 2.38%
+  test recall = 95.88%
+  test FPR = 0.64%
+  test precision = 98.89%
+  test false negatives = 23
+  test false positives = 6
+  test latency = 1.70 ms/window
+```
+
+Conclusion:
+
+- The raw waveform 1D-CNN pipeline works.
+- The smoke model reached high recall on a small sampled test set.
+- This result is not directly comparable to the full 48-channel XGBoost result because it used only sampled raw windows.
+- Best current production candidate remains `models/xgboost_fault_detector_48ch_tuned_recall97.joblib`.
+- Next deep-learning step would be a larger 1D-CNN run with more windows and a rare-fault evaluation.
+
+Artifacts:
+
+- `src/predictive_maintenance/data/raw_windows.py`
+- `src/predictive_maintenance/models/cnn1d.py`
+- `scripts/train_1d_cnn.py`
+- `models/cnn1d_fault_detector_smoke.pt`
+- `reports/cnn1d_fault_detector_smoke_report.json`
+- `reports/model_comparison.csv`
+
+### Step 9 — API Inference Path
+
+Goal:
+
+Expose the best XGBoost model through a FastAPI prediction endpoint.
+
+Plan:
+
+- Use `models/xgboost_fault_detector_48ch_tuned_recall97.joblib`.
+- Accept one rolling waveform window as channel arrays.
+- Extract the same statistical features used during training.
+- Run model probability and threshold decision.
+- Return probability, label, threshold, latency, missing features, and simple explanation messages.
+
+Implemented endpoints:
+
+```text
+GET  /health
+GET  /ready
+GET  /model/info
+POST /predict/window
+```
+
+Checklist:
+
+- [x] Add model loading for best 48-channel XGBoost artifact.
+- [x] Add waveform-window request schema.
+- [x] Add rolling-window feature extraction inside API.
+- [x] Add prediction response with probability, threshold, label, latency, and top features.
+- [x] Update API docs.
+- [x] Smoke test prediction on a real waveform window.
+
+Result:
+
+```text
+Endpoint: POST /predict/window
+Model: models/xgboost_fault_detector_48ch_tuned_recall97.joblib
+Smoke test: passed on one real 48-channel waveform window
+Returned label: normal
+Returned missing_features: []
+```
+
+Important note:
+
+- The current model expects `phase_select`, `fault_resistance`, and `sc_location`.
+- These are included as API context fields with demo defaults.
+- For a real live deployment, consider retraining without non-live context fields unless the system can provide them.
+
+Artifacts:
+
+- `src/predictive_maintenance/serving/app.py`
+- `docs/api/README.md`
+
+Dashboard UI:
+
+- [x] Add static FastAPI dashboard at `/`.
+- [x] Add HTTP report endpoints for model, rare-fault, Kafka, alert, and waveform data.
+- [x] Add waveform canvas visualization.
+- [x] Add Kafka alert list.
+- [x] Add model and rare-fault comparison tables.
+- [x] Add live rolling-window replay endpoint for waveform plus classification.
+- [x] Change dashboard waveform panel from static report data to live replay polling.
+- [x] Group repeated overlapping alert windows into one fault incident.
+
+Important UI correction:
+
+- The earlier alert list looked like many separate faults because every overlapping window during one physical fault became an alert.
+- That is expected in rolling-window detection, but it is not the right way to show incidents to users.
+- The UI now groups consecutive alert windows into a single incident.
+- The waveform panel now calls `/demo/replay/window` and shows the current rolling window, prediction, probability, true label, and waveform together.
+- Current demo data source is PROTECT-90 replay, not live industrial sensors.
+
+Dashboard URL:
+
+```text
+http://localhost:8000/
+```
+
+Dashboard artifacts:
+
+- `src/predictive_maintenance/serving/static/index.html`
+- `src/predictive_maintenance/serving/static/styles.css`
+- `src/predictive_maintenance/serving/static/app.js`
+
+### Step 10 — Streaming/Kafka Simulation
 
 Goal:
 
 Prove real-time inference path.
 
+Decision:
+
+- Kafka does not generate real data.
+- Real data comes from sensors, meters, PMU, relay, SCADA, or PLC systems.
+- For this project demo, PROTECT-90 waveform files are replayed like live sensor data.
+- Kafka is the streaming transport layer.
+- XGBoost is the current inference model.
+- 1D-CNN is a future model candidate after larger GPU training.
+
+Current real-time architecture:
+
+```text
+PROTECT-90 replay or live sensors
+-> Kafka waveform/window topic
+-> rolling-window feature extraction
+-> 48-channel tuned XGBoost model
+-> prediction/alert topic
+-> FastAPI/UI dashboard
+```
+
+Future architecture option:
+
+```text
+PROTECT-90 replay or live sensors
+-> Kafka waveform/window topic
+-> 1D-CNN raw-window model
+-> prediction/alert topic
+-> FastAPI/UI dashboard
+```
+
+Plan:
+
+1. Build local streaming simulation first.
+2. Replay one or more waveform files as rolling windows.
+3. Extract 48-channel statistical features per window.
+4. Run `models/xgboost_fault_detector_48ch_tuned_recall97.joblib`.
+5. Save alert events and latency report.
+6. Wrap the same logic with Kafka producer/consumer after local simulation works.
+
+First local simulation command:
+
+```bash
+python scripts/simulate_streaming_inference.py \
+  --sample-id 0 \
+  --max-windows 80 \
+  --output-report reports/streaming_simulation_report.json \
+  --output-alerts reports/streaming_alerts.jsonl
+```
+
 Checklist:
 
-- [ ] Create Kafka replay producer.
-- [ ] Create Kafka consumer.
-- [ ] Add rolling-window prediction.
-- [ ] Measure latency.
-- [ ] Produce streaming demo report.
+- [x] Create local streaming inference simulation.
+- [x] Replay waveform windows through XGBoost inference.
+- [x] Measure latency.
+- [x] Produce streaming demo report.
+- [x] Create Kafka replay producer.
+- [x] Create Kafka consumer.
+- [x] Run Kafka producer/consumer demo.
+
+Local simulation result:
+
+```text
+Sample ID: 0
+Windows processed: 46
+Alerts produced: 18
+True fault windows: 18
+Predicted fault windows: 18
+First alert window index: 18
+First alert true label: fault
+Average latency: 46.89 ms/window
+Max latency: 87.07 ms/window
+Missing feature count: 0
+```
+
+Conclusion:
+
+- The local replay path works.
+- Rolling-window XGBoost inference correctly produced alerts on the tested fault episode.
+- This proves the inference logic before adding real Kafka producer/consumer wrappers.
+- Next step is to create Kafka producer and consumer scripts that use the same logic.
+
+Artifacts:
+
+- `scripts/simulate_streaming_inference.py`
+- `scripts/kafka_replay_producer.py`
+- `scripts/kafka_inference_consumer.py`
+- `reports/streaming_simulation_report.json`
+- `reports/streaming_alerts.jsonl`
+
+Kafka demo commands:
+
+```bash
+docker compose up kafka
+```
+
+In terminal 1:
+
+```bash
+python scripts/kafka_inference_consumer.py \
+  --max-messages 46 \
+  --timeout-seconds 60 \
+  --output-report reports/kafka_inference_report.json \
+  --output-alerts reports/kafka_alerts.jsonl
+```
+
+In terminal 2:
+
+```bash
+python scripts/kafka_replay_producer.py \
+  --sample-id 0 \
+  --max-windows 46 \
+  --sleep-seconds 0.02
+```
+
+Kafka demo result:
+
+```text
+Kafka broker: started with docker compose
+Messages produced: 46
+Messages consumed: 46
+Alerts produced: 18
+First alert window index: 18
+First alert true label: fault
+Average consumer inference latency: 65.70 ms/window
+Max consumer inference latency: 106.94 ms/window
+Missing feature count on first alert: 0
+```
+
+Result files:
+
+- `reports/kafka_inference_report.json`
+- `reports/kafka_alerts.jsonl`
+
+Note:
+
+- The consumer briefly logged `UNKNOWN_TOPIC_OR_PART` before the producer created the topic.
+- After the topic existed, the consumer processed all 46 messages successfully.
+- Kafka is currently running locally through Docker Compose.
 
 ## Rule Going Forward
 
