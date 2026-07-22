@@ -36,6 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--channel-limit", type=int, default=48)
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--min-recall", type=float, default=0.95)
     parser.add_argument("--max-fpr", type=float, default=0.03)
@@ -50,8 +51,14 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
 
 
-def make_loader(dataset: RawWindowDataset, batch_size: int, shuffle: bool) -> DataLoader:
-    return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=0)
+def make_loader(dataset: RawWindowDataset, batch_size: int, shuffle: bool, num_workers: int) -> DataLoader:
+    return DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        persistent_workers=num_workers > 0,
+    )
 
 
 def collect_scores(
@@ -140,9 +147,9 @@ def main() -> None:
     val_dataset = RawWindowDataset(val_index, args.waveform_dir, channels)
     test_dataset = RawWindowDataset(test_index, args.waveform_dir, channels)
 
-    train_loader = make_loader(train_dataset, args.batch_size, shuffle=True)
-    val_loader = make_loader(val_dataset, args.batch_size, shuffle=False)
-    test_loader = make_loader(test_dataset, args.batch_size, shuffle=False)
+    train_loader = make_loader(train_dataset, args.batch_size, shuffle=True, num_workers=args.num_workers)
+    val_loader = make_loader(val_dataset, args.batch_size, shuffle=False, num_workers=args.num_workers)
+    test_loader = make_loader(test_dataset, args.batch_size, shuffle=False, num_workers=args.num_workers)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = FaultCNN1D(in_channels=len(channels)).to(device)
