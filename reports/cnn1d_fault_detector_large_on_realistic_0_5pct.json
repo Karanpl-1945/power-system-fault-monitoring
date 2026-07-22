@@ -1,0 +1,20 @@
+{
+  "model_path": "models/cnn1d_fault_detector_large.pt",
+  "fault_ratio_requested": 0.005,
+  "threshold": 0.9999995231628418,
+  "channel_count": 48,
+  "metrics": {
+    "tn": 39522,
+    "fp": 0,
+    "fn": 6,
+    "tp": 193,
+    "accuracy": 0.999848946401148,
+    "precision": 1.0,
+    "recall": 0.9698492462311558,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.03015075376884422,
+    "alerts_per_10000_windows": 0.0,
+    "fault_ratio": 0.005009944361924423,
+    "rows": 39721
+  }
+}
